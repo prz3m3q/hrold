@@ -1,5 +1,6 @@
 package pl.com.bottega.hrs.model;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import pl.com.bottega.hrs.infrastructure.StandardTimeProvider;
 
 import javax.persistence.*;
@@ -18,7 +19,7 @@ public class Title {
         private Employee employee;
 
         @Transient
-        private TimeProvider timeProvider = new StandardTimeProvider();
+        private TimeProvider timeProvider;
 
         @Column(name = "from_date")
         private LocalDate fromDate;
@@ -41,7 +42,7 @@ public class Title {
     }
 
     @Transient
-    private TimeProvider timeProvider = new StandardTimeProvider();
+    private TimeProvider timeProvider;
 
     @EmbeddedId
     private TitleId id;
@@ -79,6 +80,12 @@ public class Title {
 
     public LocalDate getToDate() {
         return toDate;
+    }
+
+    @Autowired
+    private void setTimeProvider(TimeProvider timeProvider) {
+        this.timeProvider = timeProvider;
+        id.timeProvider = timeProvider;
     }
 
 }

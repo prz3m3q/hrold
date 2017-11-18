@@ -1,5 +1,6 @@
 package pl.com.bottega.hrs.model;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import pl.com.bottega.hrs.infrastructure.StandardTimeProvider;
 
 import javax.persistence.*;
@@ -17,7 +18,7 @@ public class Salary {
         private Integer empNo;
 
         @Transient
-        private TimeProvider timeProvider = new StandardTimeProvider();
+        private TimeProvider timeProvider;
 
         @Column(name = "from_date")
         private LocalDate fromDate;
@@ -42,7 +43,7 @@ public class Salary {
     private Integer salary;
 
     @Transient
-    private TimeProvider timeProvider = new StandardTimeProvider();
+    private TimeProvider timeProvider;
 
     @Column(name = "to_date")
     private LocalDate toDate;
@@ -83,6 +84,12 @@ public class Salary {
 
     public void update(Integer newSalary) {
         this.salary = newSalary;
+    }
+
+    @Autowired
+    private void setTimeProvider(TimeProvider timeProvider) {
+        this.timeProvider = timeProvider;
+        id.timeProvider = timeProvider;
     }
 
 }

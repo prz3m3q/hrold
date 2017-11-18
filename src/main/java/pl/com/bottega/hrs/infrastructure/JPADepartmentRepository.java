@@ -1,5 +1,6 @@
 package pl.com.bottega.hrs.infrastructure;
 
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import pl.com.bottega.hrs.model.Department;

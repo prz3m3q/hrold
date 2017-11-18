@@ -1,5 +1,6 @@
 package pl.com.bottega.hrs.model;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import pl.com.bottega.hrs.infrastructure.StandardTimeProvider;
 
 import javax.persistence.*;
@@ -31,7 +32,8 @@ public class DepartmentAssignment {
     }
 
     @Transient
-    private TimeProvider timeProvider = new StandardTimeProvider();
+    @Autowired
+    private TimeProvider timeProvider;
 
     @EmbeddedId
     private DepartmentAssignmentId id;

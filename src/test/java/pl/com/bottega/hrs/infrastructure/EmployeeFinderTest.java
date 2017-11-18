@@ -1,12 +1,19 @@
 package pl.com.bottega.hrs.infrastructure;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.support.TransactionTemplate;
+import pl.com.bottega.hrs.acceptance.AcceptanceTest;
 import pl.com.bottega.hrs.application.BasicEmployeeDto;
 import pl.com.bottega.hrs.application.EmployeeFinder;
 import pl.com.bottega.hrs.application.EmployeeSearchCriteria;
 import pl.com.bottega.hrs.application.EmployeeSearchResults;
 import pl.com.bottega.hrs.model.*;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -16,15 +23,27 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
-public class EmployeeFinderTest extends InfrastructureTest {
+@SpringBootTest
+@RunWith(SpringRunner.class)
+public class EmployeeFinderTest extends AcceptanceTest {
 
     private int number = 1;
-    //private EmployeeFinder employeeFinder = new JPQLEmployeeFinder(createEntityManager());
-    private EmployeeFinder employeeFinder = new JPACriteriaEmployeeFinder(createEntityManager());
+
+    @Autowired
+    private EmployeeFinder employeeFinder;
+
+    @Autowired
+    private TransactionTemplate tt;
+
+    @Autowired
+    private EntityManager entityManager;
+
     private EmployeeSearchCriteria criteria = new EmployeeSearchCriteria();
     private EmployeeSearchResults results;
     private Department d1, d2, d3;
-    private TimeMachine timeMachine = new TimeMachine();
+
+    @Autowired
+    private TimeMachine timeMachine;
 
     @Test
     public void shouldFindByLastNameQuery() {
@@ -193,7 +212,7 @@ public class EmployeeFinderTest extends InfrastructureTest {
         }
 
         // when
-        executeInTransaction((entityManager) -> {
+        tt.execute((c) -> {
             List<Employee> emps = entityManager.createQuery("SELECT DISTINCT(e) FROM Employee e " +
                     "LEFT JOIN FETCH e.salaries " +
                     "JOIN e.salaries s " +
@@ -204,6 +223,7 @@ public class EmployeeFinderTest extends InfrastructureTest {
             for (Employee e : emps) {
                 System.out.println(e.getCurrentSalary().get());
             }
+            return null;
         });
 
 
@@ -213,10 +233,11 @@ public class EmployeeFinderTest extends InfrastructureTest {
         d1 = new Department("d1", "Cleaning");
         d2 = new Department("d2", "Marketing");
         d3 = new Department("d3", "Development");
-        executeInTransaction(em -> {
-            em.persist(d1);
-            em.persist(d2);
-            em.persist(d3);
+        tt.execute(c -> {
+            entityManager.persist(d1);
+            entityManager.persist(d2);
+            entityManager.persist(d3);
+            return null;
         });
     }
 
@@ -305,8 +326,9 @@ public class EmployeeFinderTest extends InfrastructureTest {
         Employee create() {
             Employee employee = new Employee(number++, firstName, lastName, LocalDate.parse(birthDate), address, timeMachine);
             consumers.forEach(c -> c.accept(employee));
-            executeInTransaction((em) -> {
-                em.persist(employee);
+            tt.execute((c) -> {
+                entityManager.persist(employee);
+                return null;
             });
             return employee;
         }
