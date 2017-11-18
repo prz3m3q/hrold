@@ -1,4 +1,4 @@
-package pl.com.bottega.hrs.ui.general;
+package pl.com.bottega.hrs.ui.web.general;
 
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.*;

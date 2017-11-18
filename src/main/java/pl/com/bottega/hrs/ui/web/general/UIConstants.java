@@ -1,4 +1,4 @@
-package pl.com.bottega.hrs.ui.general;
+package pl.com.bottega.hrs.ui.web.general;
 
 public interface UIConstants {
 	String FIRSTNAME = "Imię";

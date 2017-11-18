@@ -1,6 +1,5 @@
-package pl.com.bottega.hrs.ui;
+package pl.com.bottega.hrs.ui.web;
 
-import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.navigator.SpringViewProvider;
@@ -11,8 +10,8 @@ import pl.com.bottega.hrs.application.BasicEmployeeDto;
 import pl.com.bottega.hrs.application.EmployeeFinder;
 import pl.com.bottega.hrs.application.EmployeeSearchCriteria;
 import pl.com.bottega.hrs.application.EmployeeSearchResults;
-import pl.com.bottega.hrs.ui.general.PagingComponent;
-import pl.com.bottega.hrs.ui.general.UIConstants;
+import pl.com.bottega.hrs.ui.web.general.PagingComponent;
+import pl.com.bottega.hrs.ui.web.general.UIConstants;
 
 import java.util.List;
 

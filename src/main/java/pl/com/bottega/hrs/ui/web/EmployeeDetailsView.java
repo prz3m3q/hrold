@@ -1,4 +1,4 @@
-package pl.com.bottega.hrs.ui;
+package pl.com.bottega.hrs.ui.web;
 
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
