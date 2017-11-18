@@ -13,22 +13,22 @@ public class Title {
     @Embeddable
     public static class TitleId implements Serializable {
 
-        @Column(name = "emp_no")
-        private Integer empNo;
+        @JoinColumn(name = "emp_no")
+        @ManyToOne
+        private Employee employee;
 
         @Transient
-        private TimeProvider timeProvider;
+        private TimeProvider timeProvider = new StandardTimeProvider();
 
         @Column(name = "from_date")
         private LocalDate fromDate;
 
         private String title;
 
-        TitleId() {
-        }
+        TitleId() {}
 
-        public TitleId(Integer empNo, String title, TimeProvider timeProvider) {
-            this.empNo = empNo;
+        public TitleId(Employee employee, String title, TimeProvider timeProvider) {
+            this.employee = employee;
             this.timeProvider = timeProvider;
             this.title = title;
             this.fromDate = timeProvider.today();
@@ -51,8 +51,8 @@ public class Title {
 
     Title() {}
 
-    public Title(Integer empNo, String titleName, TimeProvider timeProvider) {
-        this.id = new TitleId(empNo, titleName, timeProvider);
+    public Title(Employee employee, String titleName, TimeProvider timeProvider) {
+        this.id = new TitleId(employee, titleName, timeProvider);
         this.timeProvider = timeProvider;
         toDate = TimeProvider.MAX_DATE;
     }

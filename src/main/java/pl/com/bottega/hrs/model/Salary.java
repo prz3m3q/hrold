@@ -17,7 +17,7 @@ public class Salary {
         private Integer empNo;
 
         @Transient
-        private TimeProvider timeProvider;
+        private TimeProvider timeProvider = new StandardTimeProvider();
 
         @Column(name = "from_date")
         private LocalDate fromDate;
@@ -34,8 +34,8 @@ public class Salary {
         public boolean startsToday() {
             return fromDate.isEqual(timeProvider.today());
         }
-    }
 
+    }
     @EmbeddedId
     private SalaryId id;
 
@@ -79,6 +79,10 @@ public class Salary {
 
     public LocalDate getToDate() {
         return toDate;
+    }
+
+    public void update(Integer newSalary) {
+        this.salary = newSalary;
     }
 
 }

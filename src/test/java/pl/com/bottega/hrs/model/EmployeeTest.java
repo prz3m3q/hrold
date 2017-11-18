@@ -207,6 +207,20 @@ public class EmployeeTest {
         );
     }
 
+    @Test
+    public void shouldFireEmployee(){
+        sut.changeSalary(SALARY);
+        sut.assignDepartment(d1);
+        sut.assignDepartment(d2);
+        sut.changeTitle("mister magister");
+
+        sut.fire();
+
+        assertFalse(getCurrentSalary().isPresent());
+        assertEquals(0, sut.getCurrentDepartments().size());
+        assertFalse(getCurrentTitle().isPresent());
+    }
+
     private String getCurrentTitleName() {
         return getCurrentTitle().get().getName();
     }

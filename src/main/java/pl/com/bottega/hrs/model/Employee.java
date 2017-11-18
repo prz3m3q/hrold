@@ -1,5 +1,8 @@
 package pl.com.bottega.hrs.model;
 
+import org.hibernate.collection.internal.PersistentBag;
+import pl.com.bottega.hrs.infrastructure.StandardTimeProvider;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -19,7 +22,7 @@ public class Employee {
     private LocalDate birthDate;
 
     @Transient
-    private TimeProvider timeProvider;
+    private TimeProvider timeProvider = new StandardTimeProvider();
 
     @Column(name = "hire_date")
     private LocalDate hireDate;
@@ -42,8 +45,7 @@ public class Employee {
     @JoinColumn(name = "emp_no")
     private Collection<Salary> salaries = new LinkedList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "emp_no")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "id.employee")
     private Collection<Title> titles = new LinkedList<>();
 
 
@@ -89,22 +91,21 @@ public class Employee {
     }
 
     public void changeSalary(Integer newSalary) {
-        getCurrentSalary().ifPresent((currentSalary) -> {
-            removeOrTerminateSalary(currentSalary);
-        });
-        addNewSalary(newSalary);
+        Optional<Salary> current = getCurrentSalary();
+        if (current.isPresent()) {
+            Salary currentSalary = current.get();
+            if (currentSalary.startsToday())
+                currentSalary.update(newSalary);
+            else {
+                currentSalary.terminate();
+                addNewSalary(newSalary);
+            }
+        } else
+            addNewSalary(newSalary);
     }
 
     private void addNewSalary(Integer newSalary) {
         salaries.add(new Salary(empNo, newSalary, timeProvider));
-    }
-
-    private void removeOrTerminateSalary(Salary currentSalary) {
-        if (currentSalary.startsToday()) {
-            salaries.remove(currentSalary);
-        } else {
-            currentSalary.terminate();
-        }
     }
 
     public void assignDepartment(Department department) {
@@ -170,7 +171,7 @@ public class Employee {
             else
                 t.terminate();
         });
-        titles.add(new Title(empNo, titleName, timeProvider));
+        titles.add(new Title(this, titleName, timeProvider));
     }
 
     public Collection<Title> getTitleHistory() {
@@ -196,4 +197,26 @@ public class Employee {
     public Gender getGender() {
         return gender;
     }
+
+    public void fire() {
+        terminateDepartmentAssignments();
+        terminateTitle();
+        terminateSalary();
+    }
+
+    private void terminateSalary() {
+        salaries.stream().filter(Salary::isCurrent).forEach(Salary::terminate);
+    }
+
+    private void terminateTitle() {
+        titles.stream().filter(Title::isCurrent).forEach(Title::terminate);
+    }
+
+    private void terminateDepartmentAssignments() {
+        departmentAssignments.stream().
+                filter(DepartmentAssignment::isCurrent).
+                map(DepartmentAssignment::getDepartment).
+                forEach(this::unassignDepartment);
+    }
+
 }
