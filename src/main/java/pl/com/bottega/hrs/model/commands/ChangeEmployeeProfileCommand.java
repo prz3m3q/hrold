@@ -67,15 +67,10 @@ public class ChangeEmployeeProfileCommand implements Command {
     }
 
     public void validate(ValidationErrors errors) {
-        if (firstName == null || firstName.trim().length() == 0) {
-            errors.add("firstName", "can't be blank");
-        }
-        if (lastName == null || lastName.trim().length() == 0) {
-            errors.add("lastName", "can't be blank");
-        }
-        if (birthDate == null) {
-            errors.add("birthDate", "can't be blank");
-        }
+        validatePresence(errors, "firstName", firstName);
+        validatePresence(errors, "lastName", lastName);
+        validatePresence(errors, "birthDate", birthDate);
+        validatePresence(errors, "address.street", address.getStreet());
         if (birthDate != null && birthDate.isAfter(LocalDate.now())) {
             errors.add("birthDate", "must be in the past");
         }
