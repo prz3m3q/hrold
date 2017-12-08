@@ -1,6 +1,7 @@
 package pl.com.bottega.hrs.infrastructure;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import pl.com.bottega.hrs.model.Employee;
 import pl.com.bottega.hrs.model.repositories.EmployeeRepository;
 

@@ -22,6 +22,7 @@ public class AcceptanceTest {
             em.createNativeQuery("DELETE FROM titles").executeUpdate();
             em.createNativeQuery("DELETE FROM dept_emp").executeUpdate();
             em.createNativeQuery("DELETE FROM departments").executeUpdate();
+            em.createNativeQuery("TRUNCATE TABLE user").executeUpdate();
             em.createNativeQuery("DELETE FROM employees").executeUpdate();
             return null;
         });
